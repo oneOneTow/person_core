@@ -1,25 +1,25 @@
 package com.ccbcfx.learn.enums;
 
-public enum StaffStatusType {
+public enum GenderType {
     /**
-     * 员工在职
+     * 男
      */
-    working(0,"在职"),
+    man(0,"男"),
     /**
-     * 员工离职
+     * 女
      */
-    leave(1,"离职");
+    woman(1,"女");
     private int order;
     private String desc;
-    StaffStatusType(int order,String desc){
+    GenderType(int order, String desc){
         this.order=order;
         this.desc=desc;
     }
     public int getOrder() {
         return order;
     }
-    public static DocumentType getEnumByOrder(int order){
-        for(DocumentType type:DocumentType.values()){
+    public static GenderType getEnumByOrder(int order){
+        for(GenderType type: GenderType.values()){
             if(type.getOrder()==order)return type;
         }
         return null;
@@ -29,8 +29,8 @@ public enum StaffStatusType {
         return desc;
     }
 
-    public static DocumentType getEnumByDesc(String desc){
-        for(DocumentType type:DocumentType.values()){
+    public static GenderType getEnumByDesc(String desc){
+        for(GenderType type: GenderType.values()){
             if(desc.equals(type.getDesc()))return type;
         }
         return null;
