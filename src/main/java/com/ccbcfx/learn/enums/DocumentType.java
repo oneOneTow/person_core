@@ -16,7 +16,7 @@ public enum DocumentType {
     /**
      * 港澳通行证
      */
-    HongKongMacauPass(3,"港澳通行证"),
+    hongKongMacauPass(3,"港澳通行证"),
     /**
      * 护照
      */
