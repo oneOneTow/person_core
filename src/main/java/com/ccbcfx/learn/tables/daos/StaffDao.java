@@ -4,7 +4,6 @@ package com.ccbcfx.learn.tables.daos;
 
 import com.ccbcfx.learn.enums.StaffStatusType;
 import com.ccbcfx.learn.tables.pojos.Staff;
-import com.ccbcfx.learn.tables.records.StaffRecord;
 import org.jooq.*;
 import org.jooq.types.UInteger;
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 import static com.ccbcfx.learn.tables.Staff.STAFF;
@@ -101,12 +101,19 @@ public class StaffDao {
         List staffs = new ArrayList<Staff>();
         Result<Record1<UInteger>> result = dslContext.select(STAFF.ID)
                 .from(STAFF)
+                .where(STAFF.ENABLED.eq((byte) 1))
                 .limit(offset, size)
                 .fetch();
         for (Record1<UInteger> record : result) {
             staffs.add(findById(record.getValue(STAFF.ID)));
         }
         return staffs;
+    }
+
+    public int count(List<Condition> conditions) {
+        Result<Record1<Integer>> result=dslContext.selectCount().from(STAFF).where(conditions).fetch();
+        int count=(int)result.getValue(0,0);
+        return count;
     }
 
 
@@ -130,24 +137,13 @@ public class StaffDao {
      *
      * @return
      */
-    public int update(Staff staff) {
-        StaffRecord record = dslContext.newRecord(STAFF, staff);
-        return dslContext.executeUpdate(record);
-    }
-
-    public Staff updateWithReturn(Staff staff, UInteger id) {
-        int resultResult = dslContext.update(STAFF)
-                .set(STAFF.NAME,staff.getName())
-                .set(STAFF.GENDER,staff.getGender())
-                .set(STAFF.PHONE,staff.getPhone())
-                .set(STAFF.DOCUMENT_TYPE,staff.getDocumentType())
-                .set(STAFF.DOCUMENT_NUMBER,staff.getDocumentNumber())
-                .set(STAFF.BIRTHDAY,staff.getBirthday())
+    public boolean update(Map<? extends Field<?>, ?> map, UInteger id) {
+        int result = dslContext.update(STAFF).set(map)
                 .where(STAFF.ID.eq(id))
                 .execute();
-
-        return resultResult>0;
+        return result > 0;
     }
+
 
     public boolean updateImgUrl(int id, String imgUrl) {
         int result = dslContext.update(STAFF)
@@ -165,7 +161,7 @@ public class StaffDao {
      * @param size
      * @return
      */
-    public List<Staff> findStaffByConditions(Condition[] conditions, int offset, int size) {
+    public List<Staff> findStaffByConditions( int offset, int size,Condition[] conditions) {
         List staffs = new ArrayList<Staff>();
         SelectQuery selectQuery = dslContext.selectQuery();
         selectQuery.addSelect(STAFF.ID);
